@@ -1,0 +1,19 @@
+{
+  "Customer": {
+    "dbConfig": {
+      "dbname": "authentication",
+      "dbusername": "root",
+      "dbpaswword": "admin",
+	  "dboptions": 
+		  {
+			  "host": "localhost",
+			  "dialect": "mysql",
+			  "pool": {
+					"max": 5,
+					"min": 0,
+					"idle": 10000
+				}
+		  }
+    }
+  }
+}
