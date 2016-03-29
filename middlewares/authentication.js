@@ -61,6 +61,7 @@ exports.verifyToken = function(req, res, next) {
   } else {
     // if there is no token
     // return login page
-    return res.sendFile('./public/views/pages/login.html'); // load our public/index.html file
+      console.log('return login page ' + __dirname);
+    return res.render(config.root + '/public/views/pages/login.html'); // load our public/index.html file
   }
 }

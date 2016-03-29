@@ -12,5 +12,5 @@ var defaults = {
 console.log('root ' + defaults.root);
 module.exports = {	
    development: extend(development,defaults),
-   test: extend(test,defaults),
+   test: extend(test,defaults)
 }[process.env.NODE_ENV || "development"]

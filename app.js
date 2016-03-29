@@ -24,8 +24,8 @@ var router = express.Router();              // get an instance of the express Ro
 
 //test@.com.sm
 //12345
-router.post('/authenticate', authentication.authenticate);
-router.use(authentication.verifyToken);
+//router.post('/authenticate', authentication.authenticate);
+//router.use(authentication.verifyToken);
 
 //middlewares are defined here
 //var movies = require('./middlewares/movies');

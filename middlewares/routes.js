@@ -1,4 +1,5 @@
 var users = require('../controllers/usersCtrl');
+var config = require('../config/config');
 
 module.exports = function(app) {
 	// Server API Routes
@@ -14,6 +15,6 @@ module.exports = function(app) {
     // frontend routes =========================================================
     // route to handle all angular requests
     app.get('*', function(req, res) {
-        res.sendfile('./public/views/pages/login.html'); // load our public/index.html file
+        res.sendFile('login.html', {root: './public/views/pages'}); // load our public/index.html file
     });
 }
