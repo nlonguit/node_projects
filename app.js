@@ -16,7 +16,11 @@ var authentication = require('./middlewares/authentication');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
+app.use('/public/libs', express.static(__dirname + '/public/libs'));
+app.use('/public/js', express.static(__dirname + '/public/js'));
+app.use('/public/css', express.static(__dirname + '/public/css'));
+app.use('/public/views/pages', express.static(__dirname + '/public/views/pages'));
+app.use('/public/views/partials', express.static(__dirname + '/public/views/partials'));
 
 // ROUTES FOR OUR API
 // =============================================================================
