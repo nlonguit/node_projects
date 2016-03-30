@@ -27,6 +27,7 @@ exports.query = function(req, res) {
   User.find().sort('-createdAt').exec(function(err, users) {
     if (err) 
 		return res.json(500, err);
+    console.log('list of user in server: ' + users);
     res.json(users);
   });
 };

@@ -5,7 +5,7 @@ angular.module('loginApp.routes', [])
     }])
     .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider){
         // Redirect to '/' in case of unmatched url
-        $urlRouterProvider.otherwise('/not-found');
+        $urlRouterProvider.otherwise('/');
 
         // Setup the states
         $stateProvider
@@ -15,10 +15,20 @@ angular.module('loginApp.routes', [])
                 // to populate
                 template : '<ui-view/>'
             })
-            .state('home.signup', {
-                url: '/',
-                templateUrl: '../views/pages/login.html',
+            .state('home.sign-up', {
+                url: '/sign-up',
+                templateUrl: '/public/views/partials/login.html',
                 controller: 'LoginCtrl'
+            })
+            .state('home.greeting', {
+                url: '/greeting',
+                templateUrl: '/public/views/partials/greeting.html',
+                controller: ''
+            })
+            .state('home.list-user', {
+                url: '/list-user',
+                templateUrl: '/public/views/partials/listuser.html',
+                controller: 'UserCtrl'
             });
         //https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-make-a-trailing-slash-optional-for-all-routes
         $urlRouterProvider.rule(function ($injector, $location) {

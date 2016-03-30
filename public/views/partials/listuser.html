@@ -1,0 +1,24 @@
+<div class="row" ng-controller="UserCtrl">
+    <div class="col-xs-12">
+        <!-- <div class="dataTables_borderWrap"> -->
+        <div>
+            <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Created Date</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr data-ng-repeat="user in users" data-on-last-repeat>
+                    <td data-ng-bind="user.createdAt"></td>
+                    <td data-ng-bind="user.username"></td>
+                    <td data-ng-bind="user.email"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
