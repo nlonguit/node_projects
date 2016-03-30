@@ -25,15 +25,12 @@ app.use('/public/views/partials', express.static(__dirname + '/public/views/part
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router();              // get an instance of the express Router
-
+//middlewares are defined here
+require('./middlewares/routes')(router);
 //test@.com.sm
 //12345
 router.post('/authenticate', authentication.authenticate);
 router.use(authentication.verifyToken);
-
-//middlewares are defined here
-//var movies = require('./middlewares/movies');
-require('./middlewares/routes')(router);
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
