@@ -9,7 +9,7 @@ var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var mongoose = require('./config/db');
-var authentication = require('./middlewares/authentication');
+//var authentication = require('./middlewares/authentication');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -34,7 +34,7 @@ require('./middlewares/routes')(router);
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
-app.use(router);
+//app.use(router);
 
 
 module.exports = app;

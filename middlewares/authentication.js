@@ -3,7 +3,6 @@ var config = require('../config/config');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 exports.authenticate = function(req, res) {
-	console.log('username ' + (req.body));
 	// find the user
   User.findOne({
     email: req.body.email
@@ -50,16 +49,15 @@ exports.verifyToken = function(req, res, next) {
       if (err) {
         return res.status(403).send({ success: false, message: 'Failed to authenticate token.' });
       } else {
+          console.log('decode: ' + decoded);
             // if everything is good, save to request for use in other middlewares
-            req.decoded = decoded;
+            req.user = decoded.user;
             next();
       }
     });
 
   } else {
         // if there is no token
-        // return login page
-        console.log('go to blank page first');
-        return res.sendFile('blank.html', {root: './public/views/partials'}); // load our public/index.html file
+       return res.status(403).send({ success: false, message: 'Not Authorized.' })
   }
 }
