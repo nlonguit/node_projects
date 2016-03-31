@@ -1,21 +1,21 @@
 /**
  * Created by Administrator on 3/30/2016.
  */
-angular.module('loginApp.services').factory('User', ['$resource', function($resource) {
+angular.module('loginApp.services').factory('User', ['$resource', 'localStorageService', function($resource, localStorageService) {
     var User = $resource('./api/users/:id', {id: '@_id'},
         {
             update: {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-access-token':localStorage['token']
+                    'x-access-token': getToken
                 }
             },
             pupdate: {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-access-token':localStorage['token']
+                    'x-access-token': getToken
                 }
             },
             query: {
@@ -23,9 +23,14 @@ angular.module('loginApp.services').factory('User', ['$resource', function($reso
                 isArray:true,
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-access-token':localStorage['token']
+                    'x-access-token': getToken
                 }
             }
         });
+
+    var getToken = function() {
+        console.log('local storage: ' + localStorageService);
+        return localStorageService.get('token');
+    }
     return User;
 } ]);
