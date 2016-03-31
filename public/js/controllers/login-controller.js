@@ -3,7 +3,7 @@
  */
 angular.module('loginApp.controllers')
     .controller('LoginCtrl', ['$scope', '$http', '$state', '$stateParams', '$resource', 'localStorageService',
-        function($scope, $http, $state, $stateParams, $resource, $localStorage, localStorageService) {
+        function($scope, $http, $state, $stateParams, $resource, localStorageService) {
 
             $scope.login = function(credentials) {
                 $http.post('/authenticate', credentials).success(function(data, status) {
@@ -17,7 +17,7 @@ angular.module('loginApp.controllers')
                     }
                     else {
                         localStorageService.set('token',data.token);
-                        $localStorage.set('principle',data.principle);
+                        localStorageService.set('principle',data.principle);
                         $state.go('home.greeting', {
 
                         });
