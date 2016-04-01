@@ -9,6 +9,8 @@ var validatePresenceOf = function (value) {
 
 var UserSchema = new Schema({
 	name: { type: String, default: '' },
+    first_name: { type: String, default: ''},
+    last_name: { type: String, default: ''},
 	email: { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true } },
 	username: { type: String, default: '' },
 	hashed_password: { type: String, default: '' },
@@ -16,8 +18,10 @@ var UserSchema = new Schema({
 	createdAt: Date, 
 	updatedAt: Date,
 	salt: { type: String, default: '' },
-   authToken: { type: String, default: '' }
+    authToken: { type: String, default: '' },
+    role: { type: String, enum: ['ADMIN', 'USER']}
 });
+
 
 UserSchema.virtual('password').set(function(password) {
    this._password = password;
@@ -32,7 +36,9 @@ UserSchema.virtual('id')
 	
 
 /* Pre save hook */ 
-UserSchema.pre('save', function(next) {  
+UserSchema.pre('save', function(next) {
+    this.name = this.first_name + ' ' + this.last_name;
+
    if (!validatePresenceOf(this.password)) {
       next(new Error('Invalid password'));
    }else{
@@ -99,7 +105,7 @@ UserSchema.methods = {
     } catch (err) {
       return '';
     }
-  },
+  }
 
   /**
    * Validation is not required if using OAuth

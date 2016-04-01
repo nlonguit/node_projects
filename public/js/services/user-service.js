@@ -3,7 +3,6 @@
  */
 angular.module('loginApp.services').factory('User', ['$resource', 'localStorageService', function($resource, localStorageService) {
     var getToken = function() {
-        console.log('local storage: ' + localStorageService);
         return localStorageService.get('token');
     }
     var User = $resource('./api/users/:id', {id: '@_id'},

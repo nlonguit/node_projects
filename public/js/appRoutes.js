@@ -15,10 +15,14 @@ angular.module('loginApp.routes', [])
                 // to populate
                 template : '<ui-view/>'
             })
-            .state('home.sign-up', {
-                url: '/sign-up',
+            .state('home.sign-in', {
+                url: '/sign-in',
                 templateUrl: '/public/views/partials/login.html',
-                controller: 'LoginCtrl'
+                controller: 'AuthenticationCtrl'
+            })
+            .state('home.logout', {
+                url: '/logout',
+                controller: 'AuthenticationCtrl'
             })
             .state('home.greeting', {
                 url: '/greeting',

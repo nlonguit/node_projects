@@ -9,6 +9,7 @@ module.exports = function(app) {
     });
 
     app.post('/authenticate', jwtAuth.authenticate);
+    app.post('/register', users.register);
 
 	// Server API Routes
     app.use('/api/*', jwtAuth.verifyToken);

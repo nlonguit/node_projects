@@ -7,7 +7,6 @@ exports.authenticate = function(req, res) {
   User.findOne({
     email: req.body.email
   }, function(err, user) {
-      console.log('go to find user');
       if (err) throw err;
 
       if (!user) {
@@ -26,7 +25,7 @@ exports.authenticate = function(req, res) {
               // return the information including token as JSON
               res.json({
                   success: true,
-                  message: 'Enjoy your token!',
+                  message: 'Login Successfully!',
                   token: token,
                   principle: user
               });
@@ -48,7 +47,6 @@ exports.verifyToken = function(req, res, next) {
             if (err) {
                 return res.status(403).send({ success: false, message: 'Failed to authenticate token.' });
             } else {
-                console.log('decode: ' + JSON.stringify(decoded));
                 // if everything is good, save to request for use in other middlewares
                 req.principle = decoded.user;
                 next();

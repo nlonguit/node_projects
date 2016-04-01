@@ -6,17 +6,17 @@ exports.setup = function(req,res){
     var user = new User({
         name:"Narendra",
         email:"narendrasoni2@gmail.com",
-        username: "narendrasoni1989",
+        username: "narendrasoni1989"
     });
 
     console.log("------ create---- is called.... ");
     user.save(function(err){
         if(err){
 			console.log('Error: ' + err);
-            res.json({message: "Error occured while saving"});
+            res.status(500).send({message: "Error occured while saving"});
 		}
         else
-            res.json({message: "saved successfully"});
+            res.status(200).send({message: "saved successfully"});
     });
 };
 
@@ -26,9 +26,8 @@ exports.setup = function(req,res){
 exports.query = function(req, res) {
   User.find().sort('-createdAt').exec(function(err, users) {
     if (err) 
-		return res.json(500, err);
-    console.log('list of user in server: ' + users);
-    res.json(users);
+		res.status(500).send({message: "Error occured while querying"});
+    res.status(200).json(users);
   });
 };
 
@@ -84,12 +83,37 @@ exports.update = function(req, res) {
  * Remove a user
  */
 exports.remove = function(req, res) {
-  var user = req.user;
-  user.remove(function(err) {
-    if (err) return res.status(500).send({
-			success: false, 
-			message: 'Error when deleting.' 
-		});
-    res.json({ message: 'Successfully deleted' });   
-  });
-};
+    var user = req.user;
+    user.remove(function (err) {
+        if (err) return res.status(500).send({
+            success: false,
+            message: 'Error when deleting.'
+        });
+        res.json({message: 'Successfully deleted'});
+    });
+}
+
+exports.register = function(req, res) {
+    console.log('register req: ' + req.body);
+    User.findOne({
+            email: req.body.email
+        }, function (err, user) {
+            if (err) throw err;
+
+            if (!user) {
+                var newUser = new User(req.body);
+                newUser.save(function (err) {
+                    if (err) {
+                        res.status(500).send({
+                            success: false,
+                            message: 'Error when saving.'
+                        });
+                    }
+                    res.status(201).send({success: true, message: 'Registration is successful!.'});
+                });
+            } else if (user) {
+                res.status(406).send({success: false, message: 'User already exist!.'});
+            }
+        }
+    );
+}
