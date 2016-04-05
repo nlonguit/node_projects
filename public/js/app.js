@@ -4,10 +4,10 @@
 'use strict';
 (function(angular) {
 
-    angular.module('loginApp.controllers', []);
-    angular.module('loginApp.services', []);
-    angular.module('loginApp.modules', ['ngResource', 'ui.router', 'LocalStorageModule']);
-    angular.module('loginApp', ['loginApp.modules', 'loginApp.routes', 'loginApp.controllers', 'loginApp.services'])
+    angular.module('shopAdvisor.controllers', []);
+    angular.module('shopAdvisor.services', []);
+    angular.module('shopAdvisor.modules', ['ngResource', 'ui.router', 'LocalStorageModule']);
+    angular.module('shopAdvisor', ['shopAdvisor.modules', 'shopAdvisor.routes', 'shopAdvisor.controllers', 'shopAdvisor.services'])
         .config(function(localStorageServiceProvider){
             localStorageServiceProvider
                 .setPrefix('ShopAdvisor')

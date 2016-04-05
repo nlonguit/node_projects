@@ -1,0 +1,53 @@
+.header {
+    padding: 15px 0 0px;
+    margin-bottom: 15px;
+}
+
+.topmenu .navbar-default {
+    background-color: #c1c1c1;
+    margin-bottom: 0px;
+}
+
+#mnHome a:hover {
+    content: url(../../images/navbar-imgs/nav-icon-home-roll-over.png); /* no need for qoutes */
+    display: block;
+}
+
+#mnSearch a:hover {
+    content: url(../../images/navbar-imgs/nav-icon-find-roll-over.png); /* no need for qoutes */
+    display: block;
+}
+
+#mnWriteReview a:hover {
+    content: url(../../images/navbar-imgs/nav-icon-rate-roll-over.png); /* no need for qoutes */
+    display: block;
+}
+
+#mnFAQ a:hover {
+    content: url(../../images/navbar-imgs/nav-icon-faq-roll-over.png); /* no need for qoutes */
+    display: block;
+}
+
+#mnTIP a:hover {
+    content: url(../../images/navbar-imgs/nav-icon-tips-roll-over.png); /* no need for qoutes */
+    display: block;
+}
+
+#mnAboutUs a:hover {
+    content: url(../../images/navbar-imgs/nav-icon-about-roll-over.png); /* no need for qoutes */
+    display: block;
+}
+
+.full {
+    background: url('../../images/background.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.text {
+    left: 0;
+    position:absolute;
+    width: 100%;
+}

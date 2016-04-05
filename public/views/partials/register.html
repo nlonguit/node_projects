@@ -1,7 +1,7 @@
 <div data-ng-show="message" class="col-xs-12 center" id="message">
     <div class="alert alert-success">{{message}}</div>
 </div>
-<div id="signupbox" style="display:none; margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+<div id="signupbox" style="margin-top:50px" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
     <div class="panel panel-info">
         <div class="panel-heading">
             <div class="panel-title">Sign Up</div>
@@ -18,26 +18,26 @@
                 <div class="form-group">
                     <label for="email" class="col-md-3 control-label">Email</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" id="email" name="email" ng-model="form.email" placeholder="Email Address">
+                        <input type="text" class="form-control" id="email" name="email" ng-model="regForm.email" placeholder="Email Address">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="firstname" class="col-md-3 control-label">First Name</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" id="firstname" name="firstname" ng-model="form.firstname" placeholder="First Name">
+                        <input type="text" class="form-control" id="firstname" name="firstname" ng-model="regForm.first_name" placeholder="First Name">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="lastname" class="col-md-3 control-label">Last Name</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" id="lastname" name="lastname" ng-model="form.lastname" ng-placeholder="Last Name">
+                        <input type="text" class="form-control" id="lastname" name="lastname" ng-model="regForm.last_name" ng-placeholder="Last Name">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="password" class="col-md-3 control-label">Password</label>
                     <div class="col-md-9">
-                        <input type="password" class="form-control" id="password" name="passwd" ng-model="form.passwd" ngplaceholder="Password">
+                        <input type="password" class="form-control" id="password" name="password" ng-model="regForm.password" ngplaceholder="Password">
                     </div>
                 </div>
 
@@ -51,7 +51,7 @@
                 <div class="form-group">
                     <!-- Button -->
                     <div class="col-md-offset-3 col-md-9">
-                        <button id="btn-signup" type="button" class="btn btn-info" data-ng-click="register(form)"><i class="icon-hand-right"></i> &nbsp Sign Up</button>
+                        <button id="btn-signup" type="button" class="btn btn-info" ng-click="register()"><i class="icon-hand-right"></i> &nbsp Sign Up</button>
                         <span style="margin-left:8px;">or</span>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                 <div style="border-top: 1px solid #999; padding-top:20px"  class="form-group">
 
                     <div class="col-md-offset-3 col-md-9">
-                        <button id="btn-fbsignup" type="button" class="btn btn-primary"><i class="icon-facebook"></i>   Sign Up with Facebook</button>
+                        <button id="btn-fb-signup" type="button" class="btn btn-primary"><i class="icon-facebook"></i>   Sign Up with Facebook</button>
                     </div>
 
                 </div>

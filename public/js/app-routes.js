@@ -1,5 +1,5 @@
 'use strict';
-angular.module('loginApp.routes', [])
+angular.module('shopAdvisor.routes', [])
     .config(['$urlMatcherFactoryProvider', function($urlMatcherFactoryProvider){
         $urlMatcherFactoryProvider.strictMode(false);
     }])
@@ -15,10 +15,20 @@ angular.module('loginApp.routes', [])
                 // to populate
                 template : '<ui-view/>'
             })
+            .state('home.homepage', {
+                url: '/',
+                templateUrl: '/public/views/partials/homepage.html',
+                controller: ''
+            })
             .state('home.sign-in', {
                 url: '/sign-in',
                 templateUrl: '/public/views/partials/login.html',
                 controller: 'AuthenticationCtrl'
+            })
+            .state('home.sign-up', {
+                url: '/sign-up',
+                templateUrl: '/public/views/partials/register.html',
+                controller: 'RegCtrl'
             })
             .state('home.logout', {
                 url: '/logout',
@@ -31,8 +41,13 @@ angular.module('loginApp.routes', [])
             })
             .state('home.list-user', {
                 url: '/list-user',
-                templateUrl: '/public/views/partials/listuser.html',
+                templateUrl: '/public/views/partials/list-user.html',
                 controller: 'UserCtrl'
+            })
+            .state('home.findyourshop', {
+                url: '/find-your-shop',
+                templateUrl: '/public/views/partials/find-your-shop.html',
+                controller: 'FindYourShopCtrl'
             });
         //https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-make-a-trailing-slash-optional-for-all-routes
         $urlRouterProvider.rule(function ($injector, $location) {

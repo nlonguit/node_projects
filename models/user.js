@@ -7,11 +7,14 @@ var validatePresenceOf = function (value) {
    return value && value.length;
 };
 
+function toLower (email) {
+    return email.toLowerCase();
+}
+
 var UserSchema = new Schema({
-	name: { type: String, default: '' },
     first_name: { type: String, default: ''},
     last_name: { type: String, default: ''},
-	email: { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true } },
+	email: { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true }, set: toLower },
 	username: { type: String, default: '' },
 	hashed_password: { type: String, default: '' },
 	profile_pic: {type: String, default: 'human-icon.png'},
@@ -19,7 +22,8 @@ var UserSchema = new Schema({
 	updatedAt: Date,
 	salt: { type: String, default: '' },
     authToken: { type: String, default: '' },
-    role: { type: String, enum: ['ADMIN', 'USER']}
+    role: { type: String, enum: ['ADMIN', 'USER'], default: 'USER'},
+    isActive: { type: Boolean, default: false }
 });
 
 
@@ -33,12 +37,13 @@ UserSchema.virtual('id')
 	.get(function() {
 	  return this._id.toHexString();
 	});
-	
+
+UserSchema.virtual('name').get(function() {
+   return this.first_name + ' ' + this.last_name;
+});
 
 /* Pre save hook */ 
 UserSchema.pre('save', function(next) {
-    this.name = this.first_name + ' ' + this.last_name;
-
    if (!validatePresenceOf(this.password)) {
       next(new Error('Invalid password'));
    }else{

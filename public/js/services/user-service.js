@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 3/30/2016.
  */
-angular.module('loginApp.services').factory('User', ['$resource', 'localStorageService', function($resource, localStorageService) {
+angular.module('shopAdvisor.services').factory('User', ['$resource', 'localStorageService', function($resource, localStorageService) {
     var getToken = function() {
         return localStorageService.get('token');
     }

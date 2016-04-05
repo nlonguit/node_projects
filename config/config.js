@@ -6,7 +6,14 @@ var test = require("./env/test");
 
 var defaults = {
    root: path.normalize(__dirname + '/..'),
-   key: 'kingofdragon'
+   key: 'kingofdragon',
+   mailService: {
+       service: 'Gmail',
+       auth: {
+           user: 'marioruiz1132015@gmail.com', // Your email id
+           pass: '12345678@X' // Your password
+       }
+   }
 };
 
 console.log('root ' + defaults.root);

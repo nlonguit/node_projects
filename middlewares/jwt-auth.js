@@ -5,12 +5,13 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 exports.authenticate = function(req, res) {
 	// find the user
   User.findOne({
-    email: req.body.email
+    email: req.body.email,
+    isActive: true
   }, function(err, user) {
       if (err) throw err;
 
       if (!user) {
-          res.status(403).send({success: false, message: 'Authentication failed. User not found.'});
+          res.status(403).json({success: false, message: 'Authentication failed. User not found or not activated'});
       } else if (user) {
           // check if password matches
           if (!user.authenticate(req.body.password)) {
@@ -23,7 +24,7 @@ exports.authenticate = function(req, res) {
               });
               user.hashed_password = undefined;
               // return the information including token as JSON
-              res.json({
+              res.status(200).json({
                   success: true,
                   message: 'Login Successfully!',
                   token: token,
@@ -45,7 +46,7 @@ exports.verifyToken = function(req, res, next) {
         // verifies secret and checks exp
         jwt.verify(token, config.key, function(err, decoded) {
             if (err) {
-                return res.status(403).send({ success: false, message: 'Failed to authenticate token.' });
+                return res.status(403).json({ success: false, message: 'Failed to authenticate token.' });
             } else {
                 // if everything is good, save to request for use in other middlewares
                 req.principle = decoded.user;
@@ -55,6 +56,6 @@ exports.verifyToken = function(req, res, next) {
 
     } else {
         // if there is no token
-        return res.status(403).send({ success: false, message: 'Not Authorized.' })
+        return res.status(403).json({ success: false, message: 'Not Authorized.' })
     }
 }

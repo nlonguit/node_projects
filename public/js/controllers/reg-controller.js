@@ -1,12 +1,11 @@
 /**
  * Created by Administrator on 4/1/2016.
  */
-angular.module('loginApp.controllers')
-    .controller('UserCtrl', ['$scope', '$http', '$state', '$stateParams', '$location', 'User',
+angular.module('shopAdvisor.controllers')
+    .controller('RegCtrl', ['$scope', '$http', '$state', '$stateParams', '$location', 'User',
         function($scope, $http, $state, $stateParams, $location, User) {
-
-            $scope.register = function (form) {
-                var response = $http.post('/register', form);
+            $scope.register = function () {
+                var response = $http.post('./register', $scope.regForm);
                 response.success(function (data, status) {
                     console.log(data);
                     if (data.success) {

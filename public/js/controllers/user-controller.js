@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 3/30/2016.
  */
-angular.module('loginApp.controllers')
+angular.module('shopAdvisor.controllers')
     .controller('UserCtrl', ['$scope', '$http', '$state', '$stateParams', '$location', 'User',
         function($scope, $http, $state, $stateParams, $location, User) {
 
