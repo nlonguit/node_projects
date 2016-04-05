@@ -13,12 +13,14 @@ var VerificationTokenSchema = new Schema({
         registeredUser: {
             type: Schema.Types.ObjectId,
             ref: 'User'
-        }
+        },
+        type: { type: String, enum: ['ACT', 'RST']}
 });
 
 VerificationTokenSchema.pre('save', function(next) {
     this.expiryDate = moment().add(60*24, 'minutes');
     this.token = uuid.v4();
+
     next();
 });
 

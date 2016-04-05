@@ -11,12 +11,19 @@ function toLower (email) {
     return email.toLowerCase();
 }
 
+function hashPassword(password) {
+    this.salt = this.makeSalt();
+    console.log('password before hash: ' + password);
+    return this.encryptPassword(password);
+}
+
 var UserSchema = new Schema({
     first_name: { type: String, default: ''},
     last_name: { type: String, default: ''},
 	email: { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true }, set: toLower },
 	username: { type: String, default: '' },
-	hashed_password: { type: String, default: '' },
+	password: { type: String, default: '', set: hashPassword },
+    last_change_password: { type: Date, default: ''},
 	profile_pic: {type: String, default: 'human-icon.png'},
 	createdAt: Date, 
 	updatedAt: Date,
@@ -26,12 +33,11 @@ var UserSchema = new Schema({
     isActive: { type: Boolean, default: false }
 });
 
-
-UserSchema.virtual('password').set(function(password) {
+/*UserSchema.virtual('password').set(function(password) {
    this._password = password;
    this.salt = this.makeSalt();
    this.hashed_password = this.encryptPassword(password);
-    }).get(function() { return this._password });
+    }).get(function() { return this._password });*/
 
 UserSchema.virtual('id')
 	.get(function() {
@@ -50,9 +56,18 @@ UserSchema.pre('save', function(next) {
 		if (this.isNew) {
 			this.createdAt = Date.now();
 		}
-		this.updatedAt = Date.now();
-		next();
+       next();
    }
+});
+
+UserSchema.pre('findOneAndUpdate', function(next) {
+    this.findOneAndUpdate({},
+        {
+            password: encryptPassword(this.getUpdate().$set.password),
+            updatedAt: Date.now()
+        }
+    );
+    next();
 });
 
 /* methods */
@@ -77,7 +92,7 @@ UserSchema.methods = {
    */
 
   authenticate: function (plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password;
+    return this.encryptPassword(plainText) === this.password;
   },
 
   /**

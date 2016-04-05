@@ -11,6 +11,9 @@ module.exports = function(app) {
     app.post('/authenticate', jwtAuth.authenticate);
     app.post('/register', users.register);
     app.get('/registrationConfirm', users.confirmRegistration);
+    app.post('/forgot', users.forgotPassword);
+    app.get('/reset', users.resetPassword);
+    app.post('/reset', users.changePassword);
 
 	// Server API Routes
     app.use('/api/*', jwtAuth.verifyToken);

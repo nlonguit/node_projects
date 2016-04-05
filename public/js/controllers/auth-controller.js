@@ -7,34 +7,41 @@ angular.module('shopAdvisor.controllers')
 
             $scope.login = function (credentials) {
                 Auth.signin(credentials, function (data, status) {
-                    console.log(data.principle);
-                    console.log(data.success);
-                        localStorageService.set('token', data.token);
-                        localStorageService.set('principle', data.principle);
-                            $('#sign-in').hide();
-                            $('#my-profile').show();
-
-                        $state.go('home.greeting', {});
+                    localStorageService.set('token', data.token);
+                    localStorageService.set('principle', data.principle);
+                        $('#sign-in').hide();
+                        $('#btnRegister').hide();
+                        $('#my-profile').show();
+                    $state.go('home.greeting', {});
                 }, function (data, status) {
                     $scope.message = data.message;
                     $state.go('home.sign-in', {});
                 })
             }
 
-            var logout = function () {
-                Auth.logout(function () {
-                    $location.path('/');
-                }, function() {
-                    $scope.message = 'Failed to logout';
+            $scope.forgot = function (email) {
+                Auth.forgot({email: email}, function(data, status) {
+                    $scope.message = data.message;
+                    $state.go('home.instruction', {});
+                }, function(data, status) {
+                    $scope.message = data.message;
                 })
             }
 
-            var popUpDialog = function() {
-                $scope.showDialog('#message');
-                // redirect to us list page after 1 sec
-                setTimeout(function () {
+            $scope.changePassword = function (password) {
+                var token = $location.search().token;
+                Auth.changePassword({password: password, token: token}, function(data, status) {
+                    $scope.message = data.message;
+                    $state.go('home.sign-in', {});
+                }, function(data, status) {
+                    $scope.message = data.message;
+                })
+            }
 
-                }, 500);
+            var logout = function () {
+                Auth.logout(function () {
+                    $state.go('home.homepage', {});
+                });
             }
 
             $scope.$on("$stateChangeSuccess", function() {

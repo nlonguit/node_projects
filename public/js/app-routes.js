@@ -20,15 +20,25 @@ angular.module('shopAdvisor.routes', [])
                 templateUrl: '/public/views/partials/homepage.html',
                 controller: ''
             })
+            .state('home.sign-up', {
+                url: '/sign-up',
+                templateUrl: '/public/views/partials/register.html',
+                controller: 'RegCtrl'
+            })
             .state('home.sign-in', {
                 url: '/sign-in',
                 templateUrl: '/public/views/partials/login.html',
                 controller: 'AuthenticationCtrl'
             })
-            .state('home.sign-up', {
-                url: '/sign-up',
-                templateUrl: '/public/views/partials/register.html',
-                controller: 'RegCtrl'
+            .state('home.forgot', {
+                url: '/forgot',
+                templateUrl: '/public/views/partials/forgot-password.html',
+                controller: 'AuthenticationCtrl'
+            })
+            .state('home.reset', {
+                url: '/password-reset',
+                templateUrl: '/public/views/partials/reset-password.html',
+                controller: 'AuthenticationCtrl'
             })
             .state('home.logout', {
                 url: '/logout',
@@ -44,11 +54,17 @@ angular.module('shopAdvisor.routes', [])
                 templateUrl: '/public/views/partials/list-user.html',
                 controller: 'UserCtrl'
             })
+            .state('home.instruction', {
+                url: '/instruction',
+                templateUrl: '/public/views/partials/instruction.html',
+                controller: ''
+            })
             .state('home.findyourshop', {
                 url: '/find-your-shop',
                 templateUrl: '/public/views/partials/find-your-shop.html',
                 controller: 'FindYourShopCtrl'
             });
+
         //https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-make-a-trailing-slash-optional-for-all-routes
         $urlRouterProvider.rule(function ($injector, $location) {
             var path = $location.url();

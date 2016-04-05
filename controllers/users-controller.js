@@ -6,6 +6,7 @@ var nodemail = require('../email/nodemail');
 var VerificationToken = require('../models/verification-token');
 var util = require('../util/url-util');
 var moment = require('moment');
+var crypto = require('crypto');
 
 exports.setup = function(req,res){
     var user = new User({
@@ -111,10 +112,10 @@ exports.register = function(req, res) {
                     if (err) {
                         return res.status(500).json({
                             success: false,
-                            message: 'Error when saving.'
+                            message: 'Error when savingddd.'
                         });
                     }
-                    var vrfToken = new VerificationToken({registeredUser: newUser.id});
+                    var vrfToken = new VerificationToken({registeredUser: newUser.id, type: 'ACT'});
                     vrfToken.save(function (err) {
                         if(err) {
                             return res.status(500).json({
@@ -137,7 +138,7 @@ exports.register = function(req, res) {
 exports.confirmRegistration = function(req, res) {
     var tokenString = util.getParam(req, 'token');
     console.log('token string: ' + tokenString);
-    VerificationToken.findOne({token: tokenString}, function(err, verificationToken) {
+    VerificationToken.findOneAndUpdate({token: tokenString, type: 'ACT'}, {token: undefined}, {new: true}, function(err, verificationToken) {
         if (err) {
             return res.status(498).json({
                 success: false,
@@ -158,12 +159,108 @@ exports.confirmRegistration = function(req, res) {
                         message: 'User not found.'
                     });
                 }
-                return res.status(200).json({
-                    success: true,
-                    message: 'Your account is activated!.'
-                });
+                res.redirect('/#/sign-in');
             });
         }
 
     })
+}
+
+exports.forgotPassword = function(req, res) {
+    User.findOne({
+        email: req.body.email
+    }, function (err, user) {
+        if (err) throw err;
+        if (!user) {
+            return res.status(498).json({
+                success: false,
+                message: 'No account with that email address exists.'
+            });
+        } else {
+            console.log('go to send emailvv');
+            var vrfToken = new VerificationToken({registeredUser: user.id, type: 'RST'});
+            vrfToken.save(function (err, token) {
+                if (err) {
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Error when saving token.'
+                    });
+                }
+                console.log('go to send email');
+                res.status(201).json({success: true, message: 'Token saving is successful!.'});
+                var resetMail = email(req, 'Password Reset', vrfToken.token);
+                nodemail.sendEmail(resetMail);
+            });
+
+        }
+    });
+}
+
+exports.resetPassword = function(req, res) {
+    console.log('req url: ' + req.url);
+    var tokenString = util.getParam(req, 'token');
+    console.log('token string: ' + tokenString);
+    VerificationToken.findOne({token: tokenString, type: 'RST'}, function(err, verificationToken) {
+        console.log('reset token: ' + JSON.stringify(verificationToken));
+        if (err) {
+            return res.status(498).json({
+                success: false,
+                message: 'Token not found.'
+            });
+        }
+        if( !verificationToken.isValid() ) {
+            return res.status(417).json({
+                success: false,
+                message: 'Token is not valid.'
+            });
+        } else {
+            res.redirect('/#/password-reset?token=' + verificationToken.token);
+        }
+    });
+}
+
+exports.changePassword = function(req, res) {
+    console.log('reset token: ' + JSON.stringify(req.body.token));
+    VerificationToken.findOneAndUpdate(
+        {
+            token: req.body.token,
+            type: 'RST'
+        },
+        {
+            token : undefined
+        },
+        {
+            new: true
+        },
+        function(err, verificationToken) {
+            console.log('reset token: ' + JSON.stringify(verificationToken));
+            if (err) {
+                return res.status(498).json({
+                    success: false,
+                    message: 'Token not found.'
+                });
+            }
+            User.findOneAndUpdate(
+                {
+                    _id: verificationToken.registeredUser,
+                    isActive: true
+                },
+                {password: req.body.password},
+                {new: true},
+                function(err, user) {
+                    if (err) {
+                        return res.status(498).json({
+                            success: false,
+                            message: 'User not found.'
+                        });
+                    }
+                    res.status(200).json({
+                        success: true,
+                        message: 'Your password is changed!.'
+                    });
+                    var pwdChangedMail = email(req, 'Your password has been changed', user);
+                    nodemail.sendEmail(pwdChangedMail);
+                });
+            }
+    );
 }
