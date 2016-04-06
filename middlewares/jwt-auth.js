@@ -14,7 +14,7 @@ exports.authenticate = function(req, res) {
           res.status(403).json({success: false, message: 'Authentication failed. User not found or not activated'});
       } else if (user) {
           // check if password matches
-          if (!user.authenticate(req.body.password)) {
+          if (!user.validPassword(req.body.password)) {
               res.status(403).send({success: false, message: 'Authentication failed. Wrong password.'});
           } else {
               // if user is found and password is right

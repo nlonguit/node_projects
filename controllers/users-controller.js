@@ -240,13 +240,15 @@ exports.changePassword = function(req, res) {
                     message: 'Token not found.'
                 });
             }
-            User.findOneAndUpdate(
+            User.update(
                 {
                     _id: verificationToken.registeredUser,
                     isActive: true
                 },
-                {password: req.body.password},
-                {new: true},
+                {
+                  password: req.body.password
+
+                },
                 function(err, user) {
                     if (err) {
                         return res.status(498).json({
