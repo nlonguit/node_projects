@@ -2,6 +2,7 @@
 var mongoose = require( 'mongoose' ); 
 var config = require('./config');
 
+mongoose.set('debug', true);
 
 var connect = function(){
    var options = {

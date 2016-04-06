@@ -14,15 +14,15 @@ exports.authenticate = function(req, res) {
           res.status(403).json({success: false, message: 'Authentication failed. User not found or not activated'});
       } else if (user) {
           // check if password matches
-          if (!user.validPassword(req.body.password)) {
+          if (!user.validatePassword(req.body.password)) {
               res.status(403).send({success: false, message: 'Authentication failed. Wrong password.'});
           } else {
               // if user is found and password is right
               // create a token
-              var token = jwt.sign(user, config.key, {
+              var token = jwt.sign(user.toObject(), config.key, {
                   expiresIn: 86400 // expires in 24 hours
               });
-              user.hashed_password = undefined;
+              user.password = undefined;
               // return the information including token as JSON
               res.status(200).json({
                   success: true,
@@ -49,7 +49,7 @@ exports.verifyToken = function(req, res, next) {
                 return res.status(403).json({ success: false, message: 'Failed to authenticate token.' });
             } else {
                 // if everything is good, save to request for use in other middlewares
-                req.principle = decoded.user;
+                req.principle = decoded;
                 next();
             }
         });

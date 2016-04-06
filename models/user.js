@@ -1,5 +1,4 @@
 var bcrypt = require("bcrypt-nodejs");
-var crypto = require('crypto');
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
@@ -16,7 +15,7 @@ var UserSchema = new Schema({
     last_name: { type: String, default: ''},
     email: { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true }, set: toLower },
     username: { type: String, default: '' },
-    password: { type: String, default: '' },
+    password: { type: String, validate: [validatePresenceOf, 'a password is required']},
     last_change_password: { type: Date, default: ''},
     profile_pic: {type: String, default: 'human-icon.png'},
     createdAt: Date,
@@ -47,6 +46,7 @@ UserSchema.pre('save', function(next) {
     if (!validatePresenceOf(this.password)) {
         next(new Error('Invalid password'));
     }else{
+        console.log('password: ' + this.password);
         if (this.isNew) {
             this.createdAt = Date.now();
             this.password = this.generateHash(this.password);
@@ -57,9 +57,14 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.pre('update', function(next) {
     this.update({},{ $set: { updatedAt: new Date()} });
-    if (this.isModified('password')) {
-        this.update({},{ $set: { last_change_password: Date.now(), password: bcrypt.hashSync(this.getUpdate().$set.password)} });
+    if (this._update.$set.password) {
+        this.update({},
+            { $set:
+                { password: bcrypt.hashSync(this.getUpdate().$set.password)},
+                  last_change_password: Date.now()
+            });
     }
+
     next();
 });
 
@@ -72,61 +77,9 @@ UserSchema.methods = {
     },
     // checking if password is valid
 
-     validPassword: function(password) {
-     return bcrypt.compareSync(password, this.password);
-     },
-
-    /**
-     * Authenticate - check if the passwords are the same
-     *
-     * @param {String} plainText
-     * @return {Boolean}
-     * @api public
-     */
-
-    authenticate: function (plainText) {
-        return this.encryptPassword(plainText) === this.password;
-    },
-
-    /**
-     * Make salt
-     *
-     * @return {String}
-     * @api public
-     */
-
-    makeSalt: function () {
-        return Math.round((new Date().valueOf() * Math.random())) + '';
-    },
-
-    /**
-     * Encrypt password
-     *
-     * @param {String} password
-     * @return {String}
-     * @api public
-     */
-
-    encryptPassword: function (password) {
-        if ( !password )  {
-            return '';
-        };
-        var encrypred;
-        try {
-            encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex');
-            return encrypred;
-        } catch (err) {
-            return '';
-        }
-    }
-
-    /**
-     * Validation is not required if using OAuth
-     */
-    /*
-     skipValidation: function() {
-     return ~oAuthTypes.indexOf(this.provider);
-     }*/
+     validatePassword: function(password) {
+        return bcrypt.compareSync(password, this.password);
+     }
 };
 
 module.exports = mongoose.model('User', UserSchema);

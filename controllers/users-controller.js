@@ -5,8 +5,6 @@ var email = require('../email/email');
 var nodemail = require('../email/nodemail');
 var VerificationToken = require('../models/verification-token');
 var util = require('../util/url-util');
-var moment = require('moment');
-var crypto = require('crypto');
 
 exports.setup = function(req,res){
     var user = new User({
@@ -14,8 +12,6 @@ exports.setup = function(req,res){
         email:"narendrasoni2@gmail.com",
         username: "narendrasoni1989"
     });
-
-    console.log("------ create---- is called.... ");
     user.save(function(err){
         if(err){
 			console.log('Error: ' + err);
@@ -100,7 +96,6 @@ exports.remove = function(req, res) {
 }
 
 exports.register = function(req, res) {
-    console.log('req body: ' + JSON.stringify(req.body));
     User.findOne({
             email: req.body.email
         }, function (err, user) {
@@ -115,18 +110,12 @@ exports.register = function(req, res) {
                             message: 'Error when savingddd.'
                         });
                     }
-                    var vrfToken = new VerificationToken({registeredUser: newUser.id, type: 'ACT'});
-                    vrfToken.save(function (err) {
-                        if(err) {
-                            return res.status(500).json({
-                                success: false,
-                                message: 'Error when saving token.'
-                            });
-                        }
-                        res.status(201).json({success: true, message: 'Registration is successful!.'});
-                        var regMail = email(req, 'Registration Confirmation', vrfToken.token);
-                        nodemail.sendEmail(regMail);
-                    })
+                    var token = jwt.sign(newUser, config.key, {
+                        expiresIn: 86400 // expires in 24 hours
+                    });
+                    res.status(201).json({success: true, message: 'Registration is successful!.'});
+                    var regMail = email(req, 'Registration Confirmation', token);
+                    nodemail.sendEmail(regMail);
                 });
             } else if (user) {
                 res.status(406).json({success: false, message: 'User already exist!.'});
@@ -136,120 +125,92 @@ exports.register = function(req, res) {
 }
 
 exports.confirmRegistration = function(req, res) {
-    var tokenString = util.getParam(req, 'token');
-    console.log('token string: ' + tokenString);
-    VerificationToken.findOneAndUpdate({token: tokenString, type: 'ACT'}, {token: undefined}, {new: true}, function(err, verificationToken) {
-        if (err) {
-            return res.status(498).json({
-                success: false,
-                message: 'Token not found.'
-            });
-        }
-        console.log('verification: ' + verificationToken);
-        if( !verificationToken.isValid() ) {
-            return res.status(417).json({
-                success: false,
-                message: 'Token is not valid.'
-            });
-        } else {
-            User.findOneAndUpdate({_id: verificationToken.registeredUser}, {isActive: true},{new: true}, function(err, user) {
-                if (err) {
-                    return res.status(498).json({
-                        success: false,
-                        message: 'User not found.'
-                    });
-                }
-                res.redirect('/#/sign-in');
-            });
-        }
+    var token = util.getParam(req, 'token');
 
-    })
+    // decode token
+    if (token) {
+        // verifies secret and checks exp
+        jwt.verify(token, config.key, function(err, decoded) {
+            if (err) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Failed to authenticate token.'
+                });
+            } else {
+                User.update({_id: decoded._doc._id}, {isActive: true}, function(err, user) {
+                    if (err) {
+                        return res.status(498).json({
+                            success: false,
+                            message: 'User not updated.'
+                        });
+                    }
+                    res.redirect('/#/sign-in');
+                });
+            }
+        });
+
+    } else {
+        // if there is no token
+        return res.status(403).json({ success: false, message: 'Failed to authenticate token.' })
+    }
 }
 
 exports.forgotPassword = function(req, res) {
-    User.findOne({
-        email: req.body.email
-    }, function (err, user) {
-        if (err) throw err;
-        if (!user) {
-            return res.status(498).json({
-                success: false,
-                message: 'No account with that email address exists.'
-            });
-        } else {
-            console.log('go to send emailvv');
-            var vrfToken = new VerificationToken({registeredUser: user.id, type: 'RST'});
-            vrfToken.save(function (err, token) {
-                if (err) {
-                    return res.status(500).json({
-                        success: false,
-                        message: 'Error when saving token.'
-                    });
-                }
-                console.log('go to send email');
-                res.status(201).json({success: true, message: 'Token saving is successful!.'});
-                var resetMail = email(req, 'Password Reset', vrfToken.token);
-                nodemail.sendEmail(resetMail);
-            });
-
-        }
+    var token = jwt.sign(req.body.email, config.key, {
+        expiresIn: 86400 // expires in 24 hours
     });
+    res.status(201).json({success: true, message: 'Token saving is created successfully!.'});
+    var resetMail = email(req, 'Password Reset', token);
+    nodemail.sendEmail(resetMail);
 }
 
 exports.resetPassword = function(req, res) {
-    console.log('req url: ' + req.url);
-    var tokenString = util.getParam(req, 'token');
-    console.log('token string: ' + tokenString);
-    VerificationToken.findOne({token: tokenString, type: 'RST'}, function(err, verificationToken) {
-        console.log('reset token: ' + JSON.stringify(verificationToken));
-        if (err) {
-            return res.status(498).json({
-                success: false,
-                message: 'Token not found.'
-            });
-        }
-        if( !verificationToken.isValid() ) {
-            return res.status(417).json({
-                success: false,
-                message: 'Token is not valid.'
-            });
-        } else {
-            res.redirect('/#/password-reset?token=' + verificationToken.token);
-        }
-    });
+    var token = util.getParam(req, 'token');
+
+    // decode token
+    if (token) {
+        // verifies secret and checks exp
+        jwt.verify(token, config.key, function(err, decoded) {
+            if (err) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Failed to authenticate token.'
+                });
+            } else {
+                // if everything is good, save to request for use in other middlewares
+                res.redirect('/#/password-reset?token=' + token);
+            }
+        });
+
+    } else {
+        // if there is no token
+        return res.status(403).json({ success: false, message: 'Not Authorized.' })
+    }
 }
 
 exports.changePassword = function(req, res) {
-    console.log('reset token: ' + JSON.stringify(req.body.token));
-    VerificationToken.findOneAndUpdate(
-        {
-            token: req.body.token,
-            type: 'RST'
-        },
-        {
-            token : undefined
-        },
-        {
-            new: true
-        },
-        function(err, verificationToken) {
-            console.log('reset token: ' + JSON.stringify(verificationToken));
-            if (err) {
-                return res.status(498).json({
-                    success: false,
-                    message: 'Token not found.'
-                });
-            }
-            User.update(
+    var token = req.body.token;
+    // verifies secret and checks exp
+    jwt.verify(token, config.key, function(err, decoded) {
+        if (err) {
+            return res.status(403).json({
+                success: false,
+                message: 'Failed to authenticate token.'
+            });
+        } else {
+            User.findOneAndUpdate(
                 {
-                    _id: verificationToken.registeredUser,
+                    email: decoded,
                     isActive: true
                 },
                 {
-                  password: req.body.password
+                    password: req.body.password
 
                 },
-                function(err, user) {
+                {
+                    new: true
+                },
+                function (err, user) {
                     if (err) {
                         return res.status(498).json({
                             success: false,
@@ -263,6 +224,6 @@ exports.changePassword = function(req, res) {
                     var pwdChangedMail = email(req, 'Your password has been changed', user);
                     nodemail.sendEmail(pwdChangedMail);
                 });
-            }
-    );
+        }
+    })
 }
