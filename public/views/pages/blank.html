@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/public/libs/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-<div class="header">
+<div class="header" ng-controller="HeaderCtrl">
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-xs-12">
@@ -19,7 +19,7 @@
                     <img src="/public/images/Logo-top-banner.png" class="img-responsive">
                 </a>
             </div>
-            <div class="col-sm-6 col-xs-12">
+            <div class="col-sm-6 col-xs-12" ng-hide="changeHeader">
                 <div class="hidden-xs" style="height: 40px;"></div>
                 <div class="visible-xs" style="height: 15px;"></div>
                 <div class="user-login">
@@ -32,7 +32,15 @@
                             <a ui-sref="home.sign-in" class="btn btn-block btn-default"><span class="arrow"></span>Sign in</a>
                             <span class="arrow"></span>
                         </div>
-                        <div class="col-sm-4 col-xs-6" style="display: none" id="my-profile">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12" ng-show="changeHeader">
+                <div class="hidden-xs" style="height: 40px;"></div>
+                <div class="visible-xs" style="height: 15px;"></div>
+                <div class="user-login">
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-6" id="my-profile">
                             <button type="button" class="btn btn-block btn-default">
                                 <span class="arrow"></span>
                                 My Profile
@@ -92,7 +100,7 @@
 </div>
 <div class="full">
     <div class="container">
-        <div ui-view/>
+        <div ui-view></div>
         <div style="height:1px; background-color:#fff; margin:20px 0;"></div>
     </div>
 </div>
@@ -114,6 +122,7 @@
 <script src="/public/js/controllers/user-controller.js"></script>
 <script src="/public/js/controllers/reg-controller.js"></script>
 <script src="/public/js/controllers/search-controller.js"></script>
+<script src="/public/js/controllers/header-controller.js"></script>
 <script type="text/javascript">
     angular.element(document).ready(function() {
         angular.bootstrap(document, [ 'shopAdvisor' ]);

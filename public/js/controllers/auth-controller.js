@@ -9,10 +9,8 @@ angular.module('shopAdvisor.controllers')
                 Auth.signin(credentials, function (data, status) {
                     localStorageService.set('token', data.token);
                     localStorageService.set('principle', data.principle);
-                        $('#sign-in').hide();
-                        $('#btnRegister').hide();
-                        $('#my-profile').show();
                     $state.go('home.greeting', {});
+                    reload();
                 }, function (data, status) {
                     $scope.message = data.message;
                     $state.go('home.sign-in', {});
